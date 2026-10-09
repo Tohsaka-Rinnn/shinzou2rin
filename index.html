@@ -75,6 +75,31 @@
       opacity: 1;
     }
 
+    .search-label {
+      display: block;
+      margin-bottom: 10px;
+      font-family: system-ui, sans-serif;
+      font-size: 12px;
+      color: #cccccc;
+    }
+
+    .search-button {
+      flex-shrink: 0;
+      min-width: 44px;
+      min-height: 44px;
+      margin-left: 8px;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .search-button:focus-visible {
+      outline: 2px solid var(--accent-white);
+      outline-offset: 2px;
+    }
+
     .search-form {
       display: flex;
       align-items: center;
@@ -117,7 +142,7 @@
       align-items: center;
       justify-content: center;
       gap: 80px;
-      margin-top: -100px;
+      margin-top: 0;
       padding-block: 44px;
     }
 
@@ -228,14 +253,15 @@
 </head>
 <body>
   <header class="header-section">
-    <div class="search-container breathing">
+    <div class="search-container">
+      <label class="search-label" for="search-input">Bing 搜索</label>
       <form id="search-form" class="search-form" role="search"
         aria-label="Bing 搜索" action="https://www.bing.com/search"
         method="get" target="_blank" rel="noopener noreferrer">
-        <label class="sr-only" for="search-input">搜索关键词</label>
         <input id="search-input" class="search-input" type="search" name="q"
           placeholder="使用 Bing 搜索…" autocomplete="off" enterkeyhint="search"
           aria-describedby="search-help" required />
+        <button class="search-button" type="submit">搜索</button>
         <span id="search-help" class="sr-only">输入关键词后按回车搜索，结果将在新标签页打开。</span>
       </form>
     </div>
@@ -284,6 +310,18 @@
 
   <script>
     (() => {
+      const searchForm = document.getElementById('search-form');
+      const searchInput = document.getElementById('search-input');
+      searchInput.addEventListener('input', () => searchInput.setCustomValidity(''));
+      searchForm.addEventListener('submit', (event) => {
+        searchInput.value = searchInput.value.trim();
+        if (!searchInput.value) {
+          event.preventDefault();
+          searchInput.setCustomValidity('请输入搜索关键词。');
+          searchInput.reportValidity();
+        }
+      });
+
       const eye = document.getElementById('eye');
       const pupil = document.getElementById('pupil');
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
